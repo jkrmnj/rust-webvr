@@ -12,6 +12,11 @@ type VRShutdownInternal = unsafe extern fn();
 type VRIsHmdPresent = unsafe extern fn() -> bool;
 type VRGetGenericInterface = unsafe extern fn(*const ::std::os::raw::c_char, *mut openvr::EVRInitError) -> isize;
 
+#[cfg(target_os = "windows")]
+const LIBRARY_NAME: &'static str = "openvr_api.dll";
+#[cfg(target_os = "linux")]
+const LIBRARY_NAME: &'static str = "libopenvr_api.so";
+
 pub struct OpenVRLibrary {
     _lib: lib::Library,
     pub init_internal: Symbol<VRInitInternal>,
@@ -22,7 +27,7 @@ pub struct OpenVRLibrary {
 
 impl OpenVRLibrary {
     pub unsafe fn new()-> lib::Result<OpenVRLibrary> {
-        let lib = try!(lib::Library::new("openvr_api.dll"));
+        let lib = try!(lib::Library::new(LIBRARY_NAME));
         let init_internal = try!(lib.get::<VRInitInternal>(b"VR_InitInternal\0")).into_raw();
         let shutdown_internal = try!(lib.get::<VRShutdownInternal>(b"VR_ShutdownInternal\0")).into_raw();
         let is_hmd_present = try!(lib.get::<VRIsHmdPresent>(b"VR_IsHmdPresent\0")).into_raw();

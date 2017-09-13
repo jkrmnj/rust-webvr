@@ -3,9 +3,9 @@ mod mock;
 #[cfg(feature = "mock")]
 pub use self::mock::MockServiceCreator;
 
-#[cfg(all(target_os="windows", feature = "openvr"))]
+#[cfg(all(any(target_os="windows", target_os = "linux"), feature = "openvr"))]
 mod openvr;
-#[cfg(all(target_os="windows", feature = "openvr"))]
+#[cfg(all(any(target_os="windows", target_os = "linux"), feature = "openvr"))]
 pub use self::openvr::OpenVRServiceCreator;
 
 #[cfg(all(feature = "googlevr", target_os= "android"))]
